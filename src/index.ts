@@ -1,14 +1,15 @@
 import express from 'express'
-import userRouter from './user.routes'
+import usersRouter from './routes/users.routes'
+import databaseService from './services/database.services'
 
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Welcome!')
-})
+app.use(express.json())
+app.use('/users', usersRouter)
 
-app.use('/user', userRouter)
+databaseService.connect()
+
 app.listen(port, () => {
   console.log(`App running on port ${port}`)
 })
