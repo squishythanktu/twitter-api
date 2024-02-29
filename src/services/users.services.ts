@@ -111,17 +111,34 @@ class UsersService {
         {
           _id: new ObjectId(user_id)
         },
-        {
-          $set: {
-            email_verify_token: '',
-            verify: UserVerifyStatus.Verified,
-            updated_at: new Date()
+        [
+          {
+            $set: {
+              email_verify_token: '',
+              verify: UserVerifyStatus.Verified,
+              updated_at: '$$NOW' // MongoDB update this field when updating is done
+            }
           }
-        }
+        ]
       )
     ])
     const [access_token, refresh_token] = tokens
     return { access_token, refresh_token }
+  }
+
+  async resendVerifyEmail(user_id: string) {
+    const email_verify_token = await this.signEmailVerifyToken(user_id)
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: {
+          email_verify_token,
+          updated_at: '$$NOW'
+        }
+      }
+    ])
+    return {
+      message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
+    }
   }
 }
 
