@@ -5,16 +5,19 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordTokenValidator,
-  verifyForgotPasswordTokenValidator
+  verifyForgotPasswordTokenValidator,
+  verifyUserValidator
 } from './../middlewares/users.middlewares'
 import { Router } from 'express'
 import {
   forgotPasswordController,
+  getMeController,
   loginController,
   logoutController,
   registerController,
   resendVerifyEmailController,
   resetPasswordController,
+  updateMeController,
   verifyEmailController,
   verifyForgotPasswordController
 } from '~/controllers/users.controllers'
@@ -85,5 +88,22 @@ usersRouter.post(
  * Body: {forgot_password_token: string, password: string, confirm_password: string}
  */
 usersRouter.post('/reset-password', resetPasswordTokenValidator, wrapRequestHandler(resetPasswordController))
+
+/**
+ * Description: Get my profile
+ * Path: /me
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ */
+usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+
+/**
+ * Description: Update my profile
+ * Path: /me
+ * Method: PATCH
+ * Header: { Authorization: Bearer <access_token> }
+ * Body: UserSchema
+ */
+usersRouter.patch('/me', accessTokenValidator, verifyUserValidator, wrapRequestHandler(updateMeController))
 
 export default usersRouter
