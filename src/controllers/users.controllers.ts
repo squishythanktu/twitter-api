@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { ObjectId } from 'mongodb'
+import { UserVerifyStatus } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { USERS_MESSAGES } from '~/constants/messages'
 import {
+  FollowReqBody,
   ForgotPasswordReqBody,
   GetProfileReqParams,
   LoginReqBody,
@@ -13,12 +17,9 @@ import {
   VerifyEmailReqBody,
   VerifyForgotPasswordReqBody
 } from '~/models/requests/User.request'
-import { ObjectId } from 'mongodb'
 import User from '~/models/schemas/User.schema'
-import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.services'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { UserVerifyStatus } from '~/constants/enums'
+import usersService from '~/services/users.services'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
@@ -143,4 +144,12 @@ export const getProfileController = async (req: Request<GetProfileReqParams>, re
     message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
     result: user
   })
+}
+
+export const followController = async (req: Request<ParamsDictionary, any, FollowReqBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { followed_user_id } = req.body
+
+  const result = await usersService.follow(user_id, followed_user_id)
+  return res.json(result)
 }

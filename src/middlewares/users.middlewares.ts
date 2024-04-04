@@ -13,7 +13,8 @@ import {
   forgotPasswordTokenSchema,
   imageSchema,
   nameSchema,
-  passwordSchema
+  passwordSchema,
+  userIdSchema
 } from '~/schema/user.schema'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
@@ -342,6 +343,15 @@ export const updateMeValidator = validate(
       },
       avatar: imageSchema,
       cover_photo: imageSchema
+    },
+    ['body']
+  )
+)
+
+export const followValidator = validate(
+  checkSchema(
+    {
+      followed_user_id: userIdSchema
     },
     ['body']
   )
