@@ -15,6 +15,9 @@ const port = process.env.PORT || 4000
 // Create upload folder if it doesn't exist
 initFolder()
 
+// Create upload folder if it doesn't exist
+initFolder()
+
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
